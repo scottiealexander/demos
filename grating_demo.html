@@ -23,15 +23,22 @@ canvas {
     <button type="button" onclick="runDemo()">Animate</button>
 </div>
 <div id="container">
-    <canvas id="canvas1" height="400" width="900" onclick="doNext()"></canvas>
+    <canvas id="canvas1" onclick="doNext()"></canvas>
 </div>
 
 <script>
     var canvas = document.querySelector("#canvas1");
     var ctx = canvas.getContext("2d");
 
-    var canvasWidth = canvas.width;
-    var canvasHeight = canvas.height;
+    var canvasWidth = Math.floor(window.innerWidth / 2);
+    var canvasHeight = Math.floor(window.innerHeight / 2);
+
+    ctx.canvas.width = canvasWidth;
+    ctx.canvas.height = canvasHeight;
+
+    var div1 = Math.floor(canvasWidth / 3);
+    var div2 = canvasWidth - div1;
+
     var kmax = canvasWidth - 1;
 
     var imageData = ctx.createImageData(canvasWidth, canvasHeight);
@@ -100,9 +107,9 @@ canvas {
                     )
                 ) + 0.5;
 
-            if (xinc < 300) {
+            if (xinc < div1) {
                 tmpval = xval;
-            } else if (xinc >= 600) {
+            } else if (xinc >= div2) {
                 tmpval = yval;
             } else {
                 if (mean) {
