@@ -2,24 +2,26 @@
 <html>
 
 <head>
-<title>Grating demo</title>
-<style>
-canvas {
-    border: 3px #CCC solid;
-    padding: 0;
-    margin: auto;
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-}
-</style>
+    <meta charset="utf-8">
+    <title>Grating demo</title>
+    <style>
+        canvas {
+            border: 3px #CCC solid;
+            padding: 0;
+            margin: auto;
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
 </head>
 
 <body>
 <div id="motion-button" style="text-align:center;">
+    <input type="text" id="phase_inc" value="0.2">
     <button type="button" onclick="runDemo()">Animate</button>
 </div>
 <div id="container">
@@ -51,6 +53,7 @@ canvas {
 
     var freq = 8.0;
     var phase = 0.0;
+    var phase_inc = 0.2;
 
     var requestAnimationFrame = window.requestAnimationFrame ||
                             window.mozRequestAnimationFrame ||
@@ -62,6 +65,8 @@ canvas {
 
     /* ---------------------------------------------------------------------- */
     function runDemo() {
+        var val = document.getElementById('phase_inc').value;
+        phase_inc = parseFloat(val);
         stop = !stop;
         doDraw();
     }
@@ -136,7 +141,7 @@ canvas {
 
         ctx.putImageData(imageData, 0, 0);
 
-        phase += 0.2;
+        phase += phase_inc;
 
         if (!stop) {
             requestAnimationFrame(doDraw);
