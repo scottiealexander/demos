@@ -19,8 +19,11 @@ canvas {
 </head>
 
 <body>
+<div id="motion-button" style="text-align:center;">
+    <button type="button" onclick="runDemo()">Animate</button>
+</div>
 <div id="container">
-    <canvas id="myCanvas" height="500" width="500"></canvas>
+    <canvas id="myCanvas" height="500" width="500" onclick="doNext()"></canvas>
 </div>
 <script>
     var mainCanvas = document.querySelector("#myCanvas");
@@ -49,6 +52,27 @@ canvas {
                             window.webkitRequestAnimationFrame ||
                             window.msRequestAnimationFrame;
 
+    document.body.addEventListener('keyup', keyPress);
+    drawRect();
+
+    /* ---------------------------------------------------------------------- */
+    function runDemo() {
+        stop = !stop;
+        drawRect();
+    }
+    /* ---------------------------------------------------------------------- */
+    function doNext() {
+        if (kDraw < 4) {
+            kDraw += 1;
+        } else {
+            kDraw = 1;
+        }
+
+        if (stop) {
+            drawRect();
+        }
+    }
+    /* ---------------------------------------------------------------------- */
     function keyPress(e) {
         if (e.which === 32) {
             stop = !stop;
@@ -74,9 +98,7 @@ canvas {
             drawRect();
         }
     }
-
-    document.body.addEventListener('keyup', keyPress);
-
+    /* ---------------------------------------------------------------------- */
     function drawRect() {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -144,7 +166,7 @@ canvas {
             requestAnimationFrame(drawRect);
         }
     }
-    drawRect();
+    /* ---------------------------------------------------------------------- */
 </script>
 </body>
 </html>

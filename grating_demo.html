@@ -19,109 +19,124 @@ canvas {
 </head>
 
 <body>
-    <div id="container">
-        <canvas id="canvas1" height="400" width="900"></canvas>
-    </div>
+<div id="motion-button" style="text-align:center;">
+    <button type="button" onclick="runDemo()">Animate</button>
+</div>
+<div id="container">
+    <canvas id="canvas1" height="400" width="900" onclick="doNext()"></canvas>
+</div>
 
-    <script>
-        var canvas = document.querySelector("#canvas1");
-        var ctx = canvas.getContext("2d");
+<script>
+    var canvas = document.querySelector("#canvas1");
+    var ctx = canvas.getContext("2d");
 
-        var canvasWidth = canvas.width;
-        var canvasHeight = canvas.height;
-        var kmax = canvasWidth - 1;
+    var canvasWidth = canvas.width;
+    var canvasHeight = canvas.height;
+    var kmax = canvasWidth - 1;
 
-        var imageData = ctx.createImageData(canvasWidth, canvasHeight);
-        var data = imageData.data;
+    var imageData = ctx.createImageData(canvasWidth, canvasHeight);
+    var data = imageData.data;
 
-        var stop = true;
-        var mean = false;
+    var stop = true;
+    var mean = false;
 
-        var weight = 0.5;
+    var weight = 0.5;
 
-        var freq = 8.0;
-        var phase = 0.0;
+    var freq = 8.0;
+    var phase = 0.0;
 
-        var requestAnimationFrame = window.requestAnimationFrame ||
-                                window.mozRequestAnimationFrame ||
-                                window.webkitRequestAnimationFrame ||
-                                window.msRequestAnimationFrame;
+    var requestAnimationFrame = window.requestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.msRequestAnimationFrame;
 
-        function doDraw() {
-            var tmpval = 0;
-            var xinc = 0;
-            var yinc = 0;
-            var xw = weight;
-            var yw = 1.0 - weight;
-            for (var k = 0; k < data.length; k += 4) {
-                var xval = (0.5 * Math.sin(
-                        (xinc / kmax) * 2 * Math.PI * freq + phase
-                        )
-                    ) + 0.5;
+    document.body.addEventListener('keyup', keyPress);
+    doDraw();
 
-                var yval = (0.5 * Math.sin(
-                        (yinc / kmax) * 2 * Math.PI * freq + phase
-                        )
-                    ) + 0.5;
-
-                if (xinc < 300) {
-                    tmpval = xval;
-                } else if (xinc >= 600) {
-                    tmpval = yval;
-                } else {
-                    if (mean) {
-                        tmpval = (xval*xw + yval*yw);
-                    } else {
-                        tmpval = 0.0;
-                    }
-                }
-
-                var val = Math.floor(tmpval * 255);
-
-                data[k] = val;
-                data[k + 1] = val;
-                data[k + 2] = val;
-                data[k + 3] = 255;
-
-                if (xinc == kmax) {
-                    xinc = 0;
-                    yinc += 1;
-                } else {
-                    xinc += 1;
-                }
-            }
-
-            ctx.putImageData(imageData, 0, 0);
-
-            phase += 0.2;
-
-            if (!stop) {
-                requestAnimationFrame(doDraw);
-            }
-        }
-
-        function keyPress(e) {
-            if (e.which === 32) {
-                stop = !stop;
-                doDraw();
-            } else if (e.which === 37) {
-                mean = false;
-                if (stop) {
-                    doDraw();
-                }
-            } else if (e.which === 39) {
-                mean = true;
-                if (stop) {
-                    doDraw();
-                }
-            }
-        }
-
-        document.body.addEventListener('keyup', keyPress);
-
+    /* ---------------------------------------------------------------------- */
+    function runDemo() {
+        stop = !stop;
         doDraw();
+    }
+    /* ---------------------------------------------------------------------- */
+    function doNext() {
+        mean = !mean;
+        if (stop) {
+            doDraw();
+        }
+    }
+    /* ---------------------------------------------------------------------- */
+    function keyPress(e) {
+        if (e.which === 32) {
+            stop = !stop;
+            doDraw();
+        } else if (e.which === 37) {
+            mean = false;
+            if (stop) {
+                doDraw();
+            }
+        } else if (e.which === 39) {
+            mean = true;
+            if (stop) {
+                doDraw();
+            }
+        }
+    }
+    /* ---------------------------------------------------------------------- */
+    function doDraw() {
+        var tmpval = 0;
+        var xinc = 0;
+        var yinc = 0;
+        var xw = weight;
+        var yw = 1.0 - weight;
+        for (var k = 0; k < data.length; k += 4) {
+            var xval = (0.5 * Math.sin(
+                    (xinc / kmax) * 2 * Math.PI * freq + phase
+                    )
+                ) + 0.5;
 
-    </script>
+            var yval = (0.5 * Math.sin(
+                    (yinc / kmax) * 2 * Math.PI * freq + phase
+                    )
+                ) + 0.5;
+
+            if (xinc < 300) {
+                tmpval = xval;
+            } else if (xinc >= 600) {
+                tmpval = yval;
+            } else {
+                if (mean) {
+                    tmpval = (xval*xw + yval*yw);
+                } else {
+                    tmpval = 0.0;
+                }
+            }
+
+            var val = Math.floor(tmpval * 255);
+
+            data[k] = val;
+            data[k + 1] = val;
+            data[k + 2] = val;
+            data[k + 3] = 255;
+
+            if (xinc == kmax) {
+                xinc = 0;
+                yinc += 1;
+            } else {
+                xinc += 1;
+            }
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+
+        phase += 0.2;
+
+        if (!stop) {
+            requestAnimationFrame(doDraw);
+        }
+    }
+    /* ---------------------------------------------------------------------- */
+</script>
 
 </body>
 </html>
