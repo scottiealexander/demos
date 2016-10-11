@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Apature demo</title>
+<style>
+canvas {
+    border: 3px #CCC solid;
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+</style>
+</head>
+
+<body>
+<div id="container">
+    <canvas id="myCanvas" height="500" width="500"></canvas>
+</div>
+<script>
+    var mainCanvas = document.querySelector("#myCanvas");
+    var ctx = mainCanvas.getContext("2d");
+
+    var canvasWidth = mainCanvas.width;
+    var canvasHeight = mainCanvas.height;
+
+    var hw = 100;
+    var hh = 100;
+    var xorig = Math.floor(canvasWidth / 2) - hw;
+    var xpos = xorig;
+    var ypos = Math.floor(canvasHeight / 2);
+
+    var xmin = 100;
+    var xmax = (canvasWidth - (hw*2)) - 100;
+
+    var inc = 2;
+
+    var stop = true
+
+    var kDraw = 1;
+
+    var requestAnimationFrame = window.requestAnimationFrame ||
+                            window.mozRequestAnimationFrame ||
+                            window.webkitRequestAnimationFrame ||
+                            window.msRequestAnimationFrame;
+
+    function keyPress(e) {
+        if (e.which === 32) {
+            stop = !stop;
+            drawRect();
+        } else if (e.which === 37) {
+            if (kDraw > 1) {
+                kDraw -= 1;
+            }
+            if (stop) {
+                drawRect();
+            }
+        } else if (e.which === 39) {
+            if (kDraw < 4) {
+                kDraw += 1;
+            }
+            if (stop) {
+                drawRect();
+            }
+        } else if (e.which === 27) {
+            kDraw = 1;
+            xpos = xorig;
+            stop = true;
+            drawRect();
+        }
+    }
+
+    document.body.addEventListener('keyup', keyPress);
+
+    function drawRect() {
+        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // color in the background
+        ctx.fillStyle = "#EEEEEE";
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+        // color for the dimond
+        ctx.fillStyle = "#006699";
+
+        // draw the dimond
+        ctx.beginPath();
+        ctx.moveTo(xpos, ypos);
+        ctx.lineTo(xpos + hw, ypos + hh);
+        ctx.lineTo(xpos + 2*hw, ypos);
+        ctx.lineTo(xpos + hw, ypos - hh);
+        ctx.fill()
+
+        if (xpos >= xmax || xpos <= xmin) {
+            inc = -inc;
+        }
+
+        xpos += inc;
+
+        // draw the occluding rect
+        ctx.beginPath();
+        ctx.moveTo(100, 100);
+        ctx.lineTo(400, 100);
+        ctx.lineTo(400, 400);
+        ctx.lineTo(100, 400);
+        ctx.closePath();
+
+        // apature in upper-left
+        ctx.moveTo(225, 200);
+        ctx.arc(200, 200, 25, 0, Math.PI * 2, true);
+        ctx.closePath();
+
+        if (kDraw > 1) {
+            // apature in bottom-right
+            ctx.moveTo(325, 300);
+            ctx.arc(300, 300, 25, 0, Math.PI * 2, true);
+            ctx.closePath();
+        }
+
+        if (kDraw > 2) {
+            // apature in upper-right
+            ctx.moveTo(325, 200);
+            ctx.arc(300, 200, 25, 0, Math.PI * 2, true);
+            ctx.closePath();
+        }
+
+        ctx.fillStyle = "#000000";
+        ctx.strokeStyle = "rgba(0.5,0.5,0.5,0.5)";
+        ctx.lineWidth = 1;
+
+        // if we are past step 3 (showing all three apatures) then only
+        // outline the occluder so the full dimond can be seen
+        if (kDraw < 4) {
+            ctx.fill();
+        }
+
+        ctx.stroke();
+
+        if (!stop) {
+            requestAnimationFrame(drawRect);
+        }
+    }
+    drawRect();
+</script>
+</body>
+</html>
