@@ -75,9 +75,16 @@
     }
     /* ---------------------------------------------------------------------- */
     function keyPress(e) {
+        var fromButton = document.activeElement.tagName == "BUTTON";
+
         if (e.which === 32) {
-            stop = !stop;
-            drawRect();
+            // if this keypress event is also clicking the animate button
+            // the do NOT toggle state or call drawRect(), just let runDemo()
+            // handle starting things
+            if (!fromButton) {
+                stop = !stop;
+                drawRect();
+            }
         } else if (e.which === 37) {
             if (kDraw > 1) {
                 kDraw -= 1;
